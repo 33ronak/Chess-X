@@ -10,4 +10,15 @@ public class King extends Piece{
             image= getImage("/piece/b-king");
         }
     }
+    public boolean canMove(int targetCol, int targetRow) {
+        if (isWithinBoard(targetCol, targetRow)) {
+            if (Math.abs(targetCol - preCol) + Math.abs(targetRow-preRow) == 1 ||
+                    Math.abs(targetCol-preRow) * Math.abs(targetRow-preRow) == 1) {
+                return true;
+            }
+
+        }
+        return false;
+    }
+
 }
