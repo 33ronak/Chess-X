@@ -1,5 +1,7 @@
 package piece;
 import main.Board;
+import main.GamePanel;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -10,6 +12,7 @@ public class Piece {
     public int x, y;
     public int col, row, preCol, preRow;
     public int color;
+    public Piece hittingP;
 
     public Piece(int color, int col, int row) {
         this.color = color;
@@ -47,12 +50,23 @@ public class Piece {
         return (y + Board.HALF_SQUARE_SIZE)/Board.SQUARE_SIZE;
     }
 
+    public int getIndex() {
+        for (int index = 0; index < GamePanel.simPieces.size(); index++) {
+            if (GamePanel.simPieces.get(index) == this) {
+                return index;
+            }
+        }
+        return 0;
+    }
+
+
     public void updatePosition() {
         this.x = getX(col);
         this.y = getY(row);
         this.preCol = getCol(x);
         this.preRow = getRow(y);
     }
+
     public void resetPosition() {
         this.col = preCol;
         this.row= preRow;
@@ -60,17 +74,46 @@ public class Piece {
         this.y = getY(row);
     }
 
-
+    public boolean canMove(int targetCol, int targetRow) {
+        return false;
+    }
 
     public boolean isWithinBoard(int targetCol, int targetRow) {
         if (targetCol >= 0 && targetCol <= 7 && targetRow >= 0 && targetRow <= 7) {
             return true;
         }
-
         return false;
     }
 
-    public boolean canMove(int targetCol, int targetRow) {
+    public Piece getHitting(int targetCol, int targetRow) {
+
+        for (Piece piece : GamePanel.simPieces) {
+            if (piece.col == targetCol && piece.row == targetRow && piece != this) {
+                return piece;
+            }
+        }
+        return null;
+    }
+
+    public boolean isSameSquare(int targetCol, int targetRow) {
+        if (targetCol == preCol && targetRow == preRow) {
+            return true;
+        }
+        return false;
+    }
+
+
+    public boolean isValidSquare(int targetCol, int targetRow) {
+        hittingP = getHitting(targetCol, targetRow);
+        if (hittingP == null) {     // Vacant Square
+            return true;
+        } else {                    // Occupied Square
+            if (hittingP.color != this.color) {     // If color is different it can be captured
+                return true;
+            } else {
+                hittingP = null;
+            }
+        }
         return false;
     }
 

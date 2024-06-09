@@ -53,13 +53,13 @@ public class GamePanel extends JPanel implements Runnable{
         pieces.add(new Pawn(WHITE, 6, 6));
         pieces.add(new Pawn(WHITE, 7, 6));
         pieces.add(new Rook(WHITE, 0, 7));
-        pieces.add(new Rook(WHITE, 7, 7));
+        pieces.add(new Rook(WHITE, 7, 4));
         pieces.add(new Knight(WHITE, 1, 7));
         pieces.add(new Knight(WHITE, 6, 7));
         pieces.add(new Bishop(WHITE, 2, 7));
         pieces.add(new Bishop(WHITE, 5, 7));
         pieces.add(new Queen(WHITE, 3, 7));
-        pieces.add(new King(WHITE, 4, 4));
+        pieces.add(new King(WHITE, 4, 7));
 
         // Black Team
         pieces.add(new Pawn(BLACK, 0, 1));
@@ -132,8 +132,13 @@ public class GamePanel extends JPanel implements Runnable{
         if(mouse.pressed == false) {
             if (activeP!= null) {
                 if (validSquare) {
+                    // MOVE CONFIRMED
+                    // Update the piece list in case a piece has been captured, and remove it during simulation
+                    copyPieces(simPieces, pieces);
                     activeP.updatePosition();
+
                 } else {
+                    copyPieces(simPieces, pieces);
                     activeP.resetPosition();
                     activeP = null;
                 }
@@ -146,6 +151,10 @@ public class GamePanel extends JPanel implements Runnable{
         canMove = false;
         validSquare = false;
 
+        // Rest the piece list in every loop
+        // This basically for restoring the removed piece during the simulation
+        copyPieces(simPieces, pieces);
+
         // If a piece is being held, update its position
         activeP.x = mouse.x - Board.HALF_SQUARE_SIZE;
         activeP.y = mouse.y - Board.HALF_SQUARE_SIZE;
@@ -155,6 +164,12 @@ public class GamePanel extends JPanel implements Runnable{
         // Check if the piece is hovering over a reachable square
         if (activeP.canMove(activeP.col, activeP.row)) {
             canMove = true;
+
+            // If hitting piece, remove it from the list
+            if (activeP.hittingP != null) {
+                simPieces.remove(activeP.hittingP.getIndex());
+            }
+
             validSquare = true;
         }
 
@@ -180,10 +195,11 @@ public class GamePanel extends JPanel implements Runnable{
                 g2.fillRect(activeP.col * Board.SQUARE_SIZE, activeP.row * Board.SQUARE_SIZE,
                         Board.SQUARE_SIZE, Board.SQUARE_SIZE);
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-
-                // Draw the active piece in the end, so it won't be hidden by the board or the colored square.
-                activeP.draw(g2);
             }
+
+            // Draw the active piece in the end, so it won't be hidden by the board or the colored square.
+            activeP.draw(g2);
+
         }
 
     }
