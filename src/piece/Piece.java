@@ -85,6 +85,14 @@ public class Piece {
         return false;
     }
 
+    public boolean isSameSquare(int targetCol, int targetRow) {
+        if (targetCol == preCol && targetRow == preRow) {
+            return true;
+        }
+        return false;
+    }
+
+
     public Piece getHitting(int targetCol, int targetRow) {
 
         for (Piece piece : GamePanel.simPieces) {
@@ -95,19 +103,11 @@ public class Piece {
         return null;
     }
 
-    public boolean isSameSquare(int targetCol, int targetRow) {
-        if (targetCol == preCol && targetRow == preRow) {
-            return true;
-        }
-        return false;
-    }
-
-
     public boolean isValidSquare(int targetCol, int targetRow) {
         hittingP = getHitting(targetCol, targetRow);
-        if (hittingP == null) {     // Vacant Square
+        if (hittingP == null) {                     // Vacant Square
             return true;
-        } else {                    // Occupied Square
+        } else {                                    // Occupied Square
             if (hittingP.color != this.color) {     // If color is different it can be captured
                 return true;
             } else {
@@ -116,6 +116,7 @@ public class Piece {
         }
         return false;
     }
+
 
 
     public void draw(Graphics2D g2) {
